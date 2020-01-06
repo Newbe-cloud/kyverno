@@ -29,18 +29,6 @@ func (pc *PolicyController) removeResourceWebhookConfiguration() error {
 	return nil
 }
 
-func (pc *PolicyController) registerResourceWebhookConfiguration() {
-	policies, err := pc.pLister.List(labels.NewSelector())
-	if err != nil {
-		glog.Errorf("failed to register resource webhook configuration, error listing policies: %v", err)
-	}
-
-	if hasMutateOrValidatePolicies(policies) {
-		glog.V(4).Info("Found existing policy, registering resource webhook configuration")
-		pc.resourceWebhookWatcher.RegisterResourceWebhook()
-	}
-}
-
 func hasMutateOrValidatePolicies(policies []*kyverno.ClusterPolicy) bool {
 	for _, policy := range policies {
 		if (*policy).HasMutateOrValidateOrGenerate() {
